@@ -31,6 +31,7 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	fs = new j1FileSystem();
 	map = new j1Map();
 	pathfinding = new j1PathFinding();
+	
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -45,6 +46,9 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 
 	// render last to swap buffer
 	AddModule(render);
+
+	timerPerf = new j1PerfTimer();
+	timeAppStart = timerPerf->Start();
 }
 
 // Destructor
@@ -109,18 +113,34 @@ bool j1App::Start()
 	bool ret = true;
 	p2List_item<j1Module*>* item;
 	item = modules.start;
+	
+
+	uint64 startTime = timerPerf->Start();
+	
 
 	while(item != NULL && ret == true)
 	{
 		ret = item->data->Start();
 		item = item->next;
 	}
+
+	uint64 endTime = timerPerf->ReadMs(startTime);
+	uint64 totaltime = endTime - startTime;
+
+	LOG("%d", totaltime);
+
+	framesSinceStartup = 0;
+
 	return ret;
 }
 
 // Called each loop iteration
 bool j1App::Update()
 {
+	framesSinceStartup++;
+
+	timeUpdateStart = timerPerf->Start();
+	
 	bool ret = true;
 	PrepareUpdate();
 
@@ -148,7 +168,7 @@ pugi::xml_node j1App::LoadConfig(pugi::xml_document& config_file) const
 	char* buf;
 	int size = App->fs->Load("config.xml", &buf);
 	pugi::xml_parse_result result = config_file.load_buffer(buf, size);
-	RELEASE(buf);
+//	RELEASE(buf);
 
 	if(result == NULL)
 		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
@@ -179,12 +199,16 @@ void j1App::FinishUpdate()
 	// Amount of ms took the last update
 	// Amount of frames during the last second
 
-	float avg_fps = 0.0f;
-	float seconds_since_startup = 0.0f;
+	startupTime = timerPerf->ReadMs(timeAppStart);
+	framesSinceStartup = timerPerf->ReadTicks(timeAppStart);
+	timeUpdateFinish = timerPerf->ReadMs(timeUpdateStart);
+	
+	float seconds_since_startup = startupTime;
 	float dt = 0.0f;
-	uint32 last_frame_ms = 0;
 	uint32 frames_on_last_update = 0;
-	uint64 frame_count = 0;
+	float avg_fps = averageFR;
+	uint32 last_frame_ms = msLastUpdate;
+	uint64 frame_count = framesSinceStartup;
 
 	static char title[256];
 	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",

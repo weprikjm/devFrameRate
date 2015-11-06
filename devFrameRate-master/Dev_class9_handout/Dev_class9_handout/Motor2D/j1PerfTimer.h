@@ -10,13 +10,14 @@ public:
 	// Constructor
 	j1PerfTimer();
 
-	void Start();
-	double ReadMs() const;
-	uint64 ReadTicks() const;
+	uint64 Start();
+	double ReadMs(uint) const;
+	uint64 ReadTicks(uint) const;
 
 private:
-	uint64	started_at;
+	//uint64	started_at;
 	static uint64 frequency;
+
 };
 
 #endif //__j1PERFTIMER_H__

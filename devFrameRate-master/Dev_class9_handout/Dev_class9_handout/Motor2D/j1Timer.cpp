@@ -29,8 +29,6 @@ uint32 j1Timer::Read() const
 
 	time /= 1000;
 
-
-
 	return time;
 }
 

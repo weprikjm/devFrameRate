@@ -90,6 +90,8 @@ public:
 	j1FileSystem*		fs = NULL;
 	j1Map*				map = NULL;
 	j1PathFinding*		pathfinding = NULL;
+	j1PerfTimer*		timerPerf = NULL;
+	j1Timer*			timer = NULL;
 
 private:
 
@@ -104,6 +106,23 @@ private:
 	bool				want_to_load = false;
 	p2SString			load_game;
 	mutable p2SString	save_game;
+
+
+	uint64 timeAppStart;
+	uint64 timeUpdateStart;
+	uint64 timeUpdateFinish;
+
+	float startupTime;
+	uint64 framesSinceStartup;
+	uint64 averageFR;
+	uint64 msLastUpdate;
+	uint64 frameLastSecond;
+
+
+
+
+
+
 
 };
 

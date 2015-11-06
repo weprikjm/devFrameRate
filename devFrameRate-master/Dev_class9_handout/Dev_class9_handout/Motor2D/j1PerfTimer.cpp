@@ -5,6 +5,7 @@
 
 #include "j1PerfTimer.h"
 #include "SDL\include\SDL_timer.h"
+#include "p2Log.h"
 
 uint64 j1PerfTimer::frequency = 0;
 
@@ -18,25 +19,39 @@ j1PerfTimer::j1PerfTimer()
 }
 
 // ---------------------------------------------
-void j1PerfTimer::Start()
+uint64 j1PerfTimer::Start()
 {
-	started_at = SDL_GetPerformanceCounter();
+	return SDL_GetPerformanceCounter();
 }
 
 // ---------------------------------------------
-double j1PerfTimer::ReadMs() const
+double j1PerfTimer::ReadMs(uint startTime) const
 {
+
+	//LOG("Time value: %d", time);
 	frequency = SDL_GetPerformanceFrequency();
-	
-	Uint64 tmp = frequency - started_at;
 
-	return (double)tmp;
+	uint64 ticks = ReadTicks(startTime);
+
+	float time = (((float)ticks / (float)frequency));
+
+	return (double)time;
 }
 
 // ---------------------------------------------
-uint64 j1PerfTimer::ReadTicks() const
+uint64 j1PerfTimer::ReadTicks(uint startTime) const
 {
-	return 0;
+	uint currentMoment = SDL_GetPerformanceCounter();
+
+	LOG("%d", frequency);
+
+	Uint64 time = currentMoment - startTime;
+
+	
+
+	return time;
+	//SDL_GetPerformanceCounter() - started_at;
 }
+
 
 

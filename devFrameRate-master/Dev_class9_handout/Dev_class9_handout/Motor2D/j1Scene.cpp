@@ -127,6 +127,8 @@ bool j1Scene::Update()
 		App->render->Blit(debug_tex, pos.x, pos.y);
 	}
 
+	
+
 	return true;
 }
 
