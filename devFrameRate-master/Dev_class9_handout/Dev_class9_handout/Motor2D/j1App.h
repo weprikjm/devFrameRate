@@ -108,18 +108,20 @@ private:
 	mutable p2SString	save_game;
 
 
-	uint64 timeAppStart;
-	uint64 timeUpdateStart;
-	uint64 timeUpdateFinish;
+	double timeAppStart;
+	double timeUpdateStart;
+	double timeUpdateFinish;
+	float UpdateCumulativeMovingAverageFPS(float);
 
 	float startupTime;
 	uint64 framesSinceStartup;
 	uint64 averageFR;
+	uint64 fps;
 	uint64 msLastUpdate;
 	uint64 frameLastSecond;
 
-
-
+	double lastInterval;
+	float updateInterval = 0.5f;
 
 
 

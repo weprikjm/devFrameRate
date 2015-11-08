@@ -48,6 +48,7 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(render);
 
 	timerPerf = new j1PerfTimer();
+	timer = new j1Timer();
 	timeAppStart = timerPerf->Start();
 }
 
@@ -130,7 +131,7 @@ bool j1App::Start()
 	LOG("%d", totaltime);
 
 	framesSinceStartup = 0;
-
+	lastInterval = 0;
 	return ret;
 }
 
@@ -203,12 +204,30 @@ void j1App::FinishUpdate()
 	framesSinceStartup = timerPerf->ReadTicks(timeAppStart);
 	timeUpdateFinish = timerPerf->ReadMs(timeUpdateStart);
 	
+	
+	
+	framesSinceStartup++;
+	lastInterval = timeUpdateFinish;
+	float avg_fps = 0.0f;
+	if (timeUpdateFinish > lastInterval + updateInterval)
+	{
+		avg_fps = (float)(framesSinceStartup / (timeUpdateFinish - lastInterval));
+		framesSinceStartup = 0;
+		lastInterval = timeUpdateFinish;
+	}
+
 	float seconds_since_startup = startupTime;
-	float dt = 0.0f;
+	float dt = timeUpdateFinish;
 	uint32 frames_on_last_update = 0;
-	float avg_fps = averageFR;
-	uint32 last_frame_ms = msLastUpdate;
+	
+	uint32 last_frame_ms = timeUpdateFinish;
 	uint64 frame_count = framesSinceStartup;
+
+	
+
+	
+
+
 
 	static char title[256];
 	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
@@ -216,6 +235,19 @@ void j1App::FinishUpdate()
 
 	App->win->SetTitle(title);
 }
+
+
+
+
+
+
+	
+
+
+
+
+
+
 
 // Call modules before each loop iteration
 bool j1App::PreUpdate()
