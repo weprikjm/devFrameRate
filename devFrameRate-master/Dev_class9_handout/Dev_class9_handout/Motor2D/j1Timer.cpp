@@ -35,8 +35,5 @@ uint32 j1Timer::Read() const
 // ---------------------------------------------
 float j1Timer::ReadSec() const
 {
-	
-
-
-	return 0.0f;
+	return Read() * ;
 }

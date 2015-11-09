@@ -33,7 +33,7 @@ double j1PerfTimer::ReadMs(uint startTime) const
 
 	uint64 ticks = ReadTicks(startTime);
 
-	float time = (((float)ticks / (float)frequency));
+	float time = 1000.0f*((((float)ticks) / frequency));
 
 	return (double)time;
 }

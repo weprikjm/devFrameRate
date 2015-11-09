@@ -201,20 +201,20 @@ void j1App::FinishUpdate()
 	// Amount of frames during the last second
 
 	startupTime = timerPerf->ReadMs(timeAppStart);
-	framesSinceStartup = timerPerf->ReadTicks(timeAppStart);
+	//framesSinceStartup = timerPerf->ReadTicks(timeAppStart);
 	timeUpdateFinish = timerPerf->ReadMs(timeUpdateStart);
 	
 	
 	
-	framesSinceStartup++;
-	lastInterval = timeUpdateFinish;
+	//framesSinceStartup++;
+	lastInterval += timeUpdateFinish;
 	float avg_fps = 0.0f;
-	if (timeUpdateFinish > lastInterval + updateInterval)
-	{
-		avg_fps = (float)(framesSinceStartup / (timeUpdateFinish - lastInterval));
-		framesSinceStartup = 0;
-		lastInterval = timeUpdateFinish;
-	}
+
+	avg_fps = (float)(framesSinceStartup / (lastInterval));
+
+
+
+
 
 	float seconds_since_startup = startupTime;
 	float dt = timeUpdateFinish;
